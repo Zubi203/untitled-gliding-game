@@ -1,0 +1,45 @@
+using UnityEngine;
+
+public class CameraTracking : MonoBehaviour
+{
+    [SerializeField] private Transform target;
+    [SerializeField] private float smoothing = 5f;
+    [SerializeField] private float sensitivity = 500f;
+    [SerializeField] private float maxViewRange = 90f;
+    [SerializeField] private Vector3 offset;
+
+    private float inputX;
+    private float inputY;
+    private Vector3 currentVelocity;
+
+    void FixedUpdate()
+    {
+        FollowTargetTransform();
+    }
+    
+    void Update()
+    {
+        RotateCamera();
+    }
+
+    void FollowTargetTransform()
+    {
+        if (target == null) return;
+
+        Vector3 targetPos = target.position + offset;
+        Vector3 interpolatedPos = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, smoothing);
+        transform.position = interpolatedPos;
+    }
+
+    void RotateCamera()
+    {
+        if (target == null) return;
+
+        inputX -= Input.GetAxis("Mouse Y") * sensitivity;
+        inputY += Input.GetAxis("Mouse X") * sensitivity;
+        float clampedInputX = Mathf.Clamp(inputX, -maxViewRange, maxViewRange);
+
+        Quaternion targetRotation = Quaternion.Euler(clampedInputX, inputY, transform.eulerAngles.z);
+        transform.rotation = targetRotation;
+    }
+}
