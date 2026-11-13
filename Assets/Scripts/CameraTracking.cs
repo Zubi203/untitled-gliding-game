@@ -6,6 +6,7 @@ public class CameraTracking : MonoBehaviour
     [SerializeField] private float smoothing = 5f;
     [SerializeField] private float sensitivity = 500f;
     [SerializeField] private float maxViewRange = 90f;
+    [SerializeField] private float maxCameraSmoothingRange = 30f;
     [SerializeField] private Vector3 offset;
 
     private float inputX;
@@ -27,8 +28,17 @@ public class CameraTracking : MonoBehaviour
         if (target == null) return;
 
         Vector3 targetPos = target.position + offset;
-        Vector3 interpolatedPos = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, smoothing);
-        transform.position = interpolatedPos;
+        float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+
+        if (distanceToTarget < maxCameraSmoothingRange)
+        {
+            Vector3 interpolatedPos = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, smoothing);
+            transform.position = interpolatedPos;
+        }
+        else
+        {
+            transform.position = targetPos;
+        }
     }
 
     void RotateCamera()
