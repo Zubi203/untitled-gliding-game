@@ -21,7 +21,7 @@ public class ScoreGainSystem : MonoBehaviour
 
     void Awake()
     {
-        scoreData = Resources.Load<ScoreData>("ScoreData");
+        scoreData = Resources.Load<ScoreData>(nameof(ScoreData));
         scoreData.ResetScore();
         CreateWallDetectionArea();
     }

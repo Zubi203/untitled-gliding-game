@@ -10,7 +10,7 @@ public class ScoreDisplay : MonoBehaviour
 
     void Awake()
     {
-        scoreData = Resources.Load<ScoreData>("ScoreData");
+        scoreData = Resources.Load<ScoreData>(nameof(ScoreData));
         GetTextMeshProComponent();
 
         if (text == null) return;
