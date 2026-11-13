@@ -8,9 +8,9 @@ public class DestroyOnCrash : MonoBehaviour
     [SerializeField] private string wallTag = "Wall";
     [SerializeField] private float sceneReloadDelay = 2f;
     [SerializeField] private GameObject playerVisual;
-    private bool isReloadingScene = false;
+    private bool isReloadingScene;
 
-    void Start()
+    void Awake()
     {
         isReloadingScene = false;
     }
@@ -47,7 +47,7 @@ public class DestroyOnCrash : MonoBehaviour
 
         isReloadingScene = true;
         yield return new WaitForSeconds(sceneReloadDelay);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         isReloadingScene = false;
     }
 }
