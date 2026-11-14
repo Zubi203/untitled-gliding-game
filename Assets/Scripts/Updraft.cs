@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Collider))]
 public class Updraft : MonoBehaviour
 {
-    [SerializeField] private float updraftForce = 4000f;
+    [SerializeField] private float updraftForce = 100f;
     [SerializeField] private List<string> affectedTags = new List<string>{"Player"};
 
 
@@ -15,7 +15,7 @@ public class Updraft : MonoBehaviour
         collider.isTrigger = true;
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         bool validCollider = false;
         foreach (string tag in affectedTags)
@@ -27,6 +27,8 @@ public class Updraft : MonoBehaviour
         }
 
         if (!validCollider) return;
+
+        if (other.isTrigger) return;
 
         if (other.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {

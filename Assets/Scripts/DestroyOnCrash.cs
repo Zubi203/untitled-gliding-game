@@ -8,6 +8,7 @@ public class DestroyOnCrash : MonoBehaviour
     [SerializeField] private string wallTag = "Wall";
     [SerializeField] private float sceneReloadDelay = 2f;
     [SerializeField] private GameObject playerVisual;
+    [SerializeField] private ParticleSystem deathParticles;
     private bool isReloadingScene;
 
     void Awake()
@@ -25,9 +26,17 @@ public class DestroyOnCrash : MonoBehaviour
 
     void Crash()
     {
-        //Play particle effect
+        if (deathParticles != null)
+        {
+            deathParticles.Play();
+        }
+
         //screen shake
-        
+        if (TryGetComponent<BoxCollider>(out BoxCollider collider))
+        {
+            collider.enabled = false;
+        }
+
         if (playerVisual != null)
         {
             playerVisual.SetActive(false);

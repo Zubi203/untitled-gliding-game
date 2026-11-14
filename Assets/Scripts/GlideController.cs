@@ -1,27 +1,36 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GlideController : MonoBehaviour
 {
+    [Header("Input")]
+    [SerializeField] private PlayerInput inputHandler;
+    [SerializeField] private float minCameraFOV = 45f;
+    [SerializeField] private float maxCameraFOV = 90f;
+    private Camera camera;
+
+    [Header("Forces")]
+    [SerializeField] private float tiltStrength = 500f;
+    [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private float gravityForce = 8f;
+
+    [Header("Velocities")]
     [SerializeField] private float baseSpeed = 30f;
     [SerializeField] private float minThrustSpeed = 5f;
     [SerializeField] private float maxThrustSpeed = 400f;
-    [SerializeField] private float tiltStrength = 500f;
-    [SerializeField] private float rotationSpeed = 5f;
-    [SerializeField] private float dragFactor = 1f;
-    [SerializeField] private float minDrag = 0.2f;
-    [SerializeField] private float minAcceleration = 0.5f;
-    [SerializeField] private float maxAcceleration = 1f;
+    [SerializeField] private float velocityLerpFactor = 4f;
     private Rigidbody rb;
-    private Transform cameraAnchor;
-    private float currentThrust;
-    private float currentTilt;
-    private float tiltLerpValue;
+    private float currentThrust, currentTilt, tiltLerpValue;
+
     
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        cameraAnchor = Camera.main.transform.parent;
+        rb.linearDamping = 0f;
+        rb.useGravity = false;
+        camera = Camera.main;
+        Assert.IsNotNull(inputHandler, "PlayerInput has not been assigned to the Glide Controller");
     }
 
     private void FixedUpdate()
@@ -32,33 +41,31 @@ public class GlideController : MonoBehaviour
     private void Update()
     {
         GlideRotation();
+        AdjustCameraFOV();
     }
 
     private void GlideMovement()
     {
         if (rb == null) return;
 
-        float pitchInDegrees = cameraAnchor.eulerAngles.x % 360f;
+        float pitchInRadians = inputHandler.transform.eulerAngles.x * Mathf.Deg2Rad;
+        float diveFactor = Vector3.Dot(transform.forward, Vector3.down);
 
-        float pitchInRadians = cameraAnchor.eulerAngles.x * Mathf.Deg2Rad;
-        float mappedPitch = Mathf.Sin(pitchInRadians) * baseSpeed;
-        float offsetMappedPitch = Mathf.Cos(pitchInRadians) * dragFactor;
+        float horizontalForceComponentMultiplier = 0.5f * Mathf.Cos(pitchInRadians) + 1f;
+        float airResistanceMultiplier = 0.5f * Mathf.Sin(pitchInRadians) + 1f;
 
-        //tweak acceleration based on pitch angle
-        float accelerationPercent = (pitchInDegrees >= 300f) ? minAcceleration : maxAcceleration;
 
-        currentThrust += mappedPitch * accelerationPercent * Time.fixedDeltaTime;
-        currentThrust = Mathf.Clamp(currentThrust, 0f, maxThrustSpeed);
+        currentThrust += diveFactor * baseSpeed * Time.fixedDeltaTime;
+        currentThrust = Mathf.Clamp(currentThrust, minThrustSpeed, maxThrustSpeed);
 
-        if (rb.linearVelocity.magnitude > minThrustSpeed)
-        {
-            rb.AddRelativeForce(Vector3.forward * currentThrust);
-            rb.linearDamping = Mathf.Clamp(offsetMappedPitch, minDrag, dragFactor);
-        }
-        else
-        {
-            currentThrust = 0f;
-        }
+        Vector3 forwardVelocity = transform.forward * currentThrust;
+        
+        Vector3 netVelocity = Vector3.Lerp(rb.linearVelocity, forwardVelocity, velocityLerpFactor * Time.fixedDeltaTime);
+
+        netVelocity += Vector3.down * gravityForce * Time.fixedDeltaTime;
+
+        rb.linearVelocity = netVelocity;
+
         
     }
 
@@ -77,7 +84,19 @@ public class GlideController : MonoBehaviour
             tiltLerpValue = 0f;
         }
 
-        Quaternion targetRotation = Quaternion.Euler(cameraAnchor.eulerAngles.x, cameraAnchor.eulerAngles.y, -currentTilt);
+        Quaternion targetRotation = Quaternion.Euler(inputHandler.transform.eulerAngles.x, inputHandler.transform.eulerAngles.y, -currentTilt);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    void AdjustCameraFOV()
+    {
+        if (rb == null) return;
+
+        float currentSpeed = rb.linearVelocity.magnitude;
+        float currentSpeedPercent = currentSpeed / maxThrustSpeed;
+        float cameraFOVRange = maxCameraFOV - minCameraFOV;
+        float cameraFOV = minCameraFOV + (cameraFOVRange * currentSpeedPercent);
+        camera.fieldOfView = cameraFOV;
+
     }
 }

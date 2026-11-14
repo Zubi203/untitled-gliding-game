@@ -4,13 +4,10 @@ public class CameraTracking : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private float smoothing = 5f;
-    [SerializeField] private float sensitivity = 500f;
-    [SerializeField] private float maxViewRange = 90f;
+    [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private float maxCameraSmoothingRange = 30f;
     [SerializeField] private Vector3 offset;
 
-    private float inputX;
-    private float inputY;
     private Vector3 currentVelocity;
 
     void FixedUpdate()
@@ -45,11 +42,7 @@ public class CameraTracking : MonoBehaviour
     {
         if (target == null) return;
 
-        inputX -= Input.GetAxis("Mouse Y") * sensitivity;
-        inputY += Input.GetAxis("Mouse X") * sensitivity;
-        float clampedInputX = Mathf.Clamp(inputX, -maxViewRange, maxViewRange);
-
-        Quaternion targetRotation = Quaternion.Euler(clampedInputX, inputY, transform.eulerAngles.z);
-        transform.rotation = targetRotation;
+        Quaternion targetRotation = Quaternion.Euler(target.eulerAngles.x, target.eulerAngles.y, transform.eulerAngles.z);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 }

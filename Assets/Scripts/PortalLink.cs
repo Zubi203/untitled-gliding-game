@@ -6,6 +6,7 @@ public class PortalLink : MonoBehaviour
     [SerializeField] private float teleportCooldown = 0.5f;
     [SerializeField] private Portal PortalA;
     [SerializeField] private Portal PortalB;
+    [SerializeField] private ParticleSystem portalParticles;
     private bool isTeleporting = false;
 
     void Awake()
@@ -20,6 +21,8 @@ public class PortalLink : MonoBehaviour
         if (isTeleporting) return;
         isTeleporting = true;
 
+        SpawnParticles(entryPortal);
+
         Rigidbody playerRigidbody = null;
         if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {
@@ -31,6 +34,7 @@ public class PortalLink : MonoBehaviour
         Portal exitPortal = (entryPortal == PortalA) ? PortalB : PortalA;
 
         playerRigidbody.position = exitPortal.transform.position;
+        SpawnParticles(exitPortal);
         StartCoroutine(StartTeleportCooldown());
     }
 
@@ -38,5 +42,14 @@ public class PortalLink : MonoBehaviour
     {
         yield return new WaitForSeconds(teleportCooldown);
         isTeleporting = false;
+    }
+
+    void SpawnParticles(Portal targetPortal)
+    {
+        if (portalParticles == null) return;
+        
+        portalParticles.transform.position = targetPortal.transform.position;
+        portalParticles.transform.rotation = targetPortal.transform.rotation;
+        portalParticles.Play();
     }
 }
