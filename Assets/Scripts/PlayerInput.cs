@@ -7,6 +7,10 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private float rotationSpeed = 500f;
     float inputX, inputY;
 
+    void Start()
+    {
+        Cursor.visible = false;
+    }
     void Update()
     {
         RotateController();

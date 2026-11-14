@@ -42,7 +42,7 @@ public class CameraTracking : MonoBehaviour
     {
         if (target == null) return;
 
-        Quaternion targetRotation = Quaternion.Euler(target.eulerAngles.x, target.eulerAngles.y, transform.eulerAngles.z);
+        Quaternion targetRotation = Quaternion.Euler(target.eulerAngles.x, target.eulerAngles.y, 0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 }
