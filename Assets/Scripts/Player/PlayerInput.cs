@@ -12,6 +12,10 @@ public class PlayerInput : MonoBehaviour
 
     private float rotationInputX, rotationInputY;
 
+    void Awake()
+    {
+        rotationInput = transform.rotation.eulerAngles;
+    }
     void Update()
     {
         GetInput();

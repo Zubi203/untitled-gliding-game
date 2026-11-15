@@ -11,15 +11,17 @@ public class GlideState : FlightState
 
     public override void EnterState()
     {
-        
+        base.EnterState();
     }
     public override void ExitState(){}
     public override void UpdateState()
     {
+        base.UpdateState();
         GlideRotation();
     }
     public override void FixedUpdateState()
     {
+        base.FixedUpdateState();
         GlideMovement();
     }
     public override FlightStateMachine.EFlightState GetNextState()

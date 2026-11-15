@@ -7,6 +7,7 @@ public class CameraTracking : MonoBehaviour
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private float maxCameraSmoothingRange = 30f;
     [SerializeField] private Vector3 offset;
+    [SerializeField] private float maxVerticalRotation = 60f;
 
     private Vector3 currentVelocity;
 
