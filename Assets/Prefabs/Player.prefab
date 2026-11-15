@@ -2409,9 +2409,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8e9bba7d1aa6841a71c25da42c82bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  sensitivity: 5
-  maxRotationRange: 90
-  rotationSpeed: 500
+  sensitivity: 2
+  maxPitchRange: 90
+  rotationSpeed: 1000
 --- !u!1 &4845890888035492545
 GameObject:
   m_ObjectHideFlags: 0
@@ -2734,9 +2734,11 @@ GameObject:
   - component: {fileID: 2229713125018047543}
   - component: {fileID: 4990389074266035065}
   - component: {fileID: 3188301510932671816}
-  - component: {fileID: 4402160161856963671}
   - component: {fileID: 2867984576933943451}
   - component: {fileID: 580544096257544813}
+  - component: {fileID: 8680621266058039951}
+  - component: {fileID: 5177438427304244949}
+  - component: {fileID: 7617396903468075618}
   m_Layer: 7
   m_Name: PlayerBody
   m_TagString: Player
@@ -2811,28 +2813,6 @@ CapsuleCollider:
   m_Height: 5
   m_Direction: 2
   m_Center: {x: 0, y: 1.33, z: 1.69}
---- !u!114 &4402160161856963671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8752298254952805374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54f66d12d5614d447aed47894d3353d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GlideController
-  inputHandler: {fileID: 5960091817370624451}
-  minCameraFOV: 40
-  maxCameraFOV: 70
-  tiltStrength: 2
-  rotationSpeed: 3
-  gravityForce: 80
-  baseSpeed: 40
-  minThrustSpeed: 5
-  maxThrustSpeed: 200
-  velocityLerpFactor: 4
 --- !u!114 &2867984576933943451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2865,3 +2845,55 @@ MonoBehaviour:
   minScoreMultiplier: 0.5
   maxScoreMultiplier: 2
   wallTag: Wall
+--- !u!114 &8680621266058039951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752298254952805374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd6c5b8fe27ef1c429ecb6d98bf2215b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  maxPlayerSpeed: 200
+  minCameraFOV: 45
+  maxCameraFOV: 80
+--- !u!114 &5177438427304244949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752298254952805374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c45e84a4179f244abe2a1221938c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightStateMachineContext
+  maxTilt: 50
+  tiltStrength: 2
+  rotationChangeRate: 3
+  gravityForce: 80
+  baseSpeed: 40
+  minSpeed: 5
+  maxSpeed: 200
+  velocityChangeRate: 4
+  playerRigidbody: {fileID: 4990389074266035065}
+  inputHandler: {fileID: 5960091817370624451}
+  flightJuice: {fileID: 8680621266058039951}
+  playerTransform: {fileID: 2229713125018047543}
+--- !u!114 &7617396903468075618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752298254952805374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58c8307b9f07a1e4287222c0668dc0cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightStateMachine
+  context: {fileID: 5177438427304244949}

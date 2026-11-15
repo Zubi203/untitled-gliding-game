@@ -29,7 +29,6 @@ public class GlideController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.linearDamping = 0f;
         rb.useGravity = false;
-        camera = Camera.main;
         Assert.IsNotNull(inputHandler, "PlayerInput has not been assigned to the Glide Controller");
     }
 
@@ -41,7 +40,6 @@ public class GlideController : MonoBehaviour
     private void Update()
     {
         GlideRotation();
-        AdjustCameraFOV();
     }
 
     private void GlideMovement()
@@ -86,17 +84,5 @@ public class GlideController : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.Euler(inputHandler.transform.eulerAngles.x, inputHandler.transform.eulerAngles.y, -currentTilt);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-    }
-
-    void AdjustCameraFOV()
-    {
-        if (rb == null) return;
-
-        float currentSpeed = rb.linearVelocity.magnitude;
-        float currentSpeedPercent = currentSpeed / maxThrustSpeed;
-        float cameraFOVRange = maxCameraFOV - minCameraFOV;
-        float cameraFOV = minCameraFOV + (cameraFOVRange * currentSpeedPercent);
-        camera.fieldOfView = cameraFOV;
-
     }
 }
