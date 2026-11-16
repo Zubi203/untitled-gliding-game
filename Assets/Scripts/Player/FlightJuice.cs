@@ -5,8 +5,10 @@ public class FlightJuice : MonoBehaviour
     public float maxPlayerSpeed = 200f;
     [SerializeField] private float minCameraFOV = 45f;
     [SerializeField] private float maxCameraFOV = 80f;
+    [SerializeField] private float FOVLerpSpeed = 5f;
     private Camera camera;
     private Rigidbody rb;
+    private float currentCameraFOV;
 
     void Start()
     {
@@ -26,8 +28,8 @@ public class FlightJuice : MonoBehaviour
         float currentSpeed = rb.linearVelocity.magnitude;
         float currentSpeedPercent = currentSpeed / maxPlayerSpeed;
         float cameraFOVRange = maxCameraFOV - minCameraFOV;
-        float cameraFOV = minCameraFOV + (cameraFOVRange * currentSpeedPercent);
-        camera.fieldOfView = cameraFOV;
+        currentCameraFOV = minCameraFOV + (cameraFOVRange * currentSpeedPercent);
+        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentCameraFOV, Time.deltaTime * FOVLerpSpeed);
 
     }
 }

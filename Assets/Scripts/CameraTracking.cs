@@ -7,7 +7,7 @@ public class CameraTracking : MonoBehaviour
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private float maxCameraSmoothingRange = 30f;
     [SerializeField] private Vector3 offset;
-    [SerializeField] private float maxVerticalRotation = 60f;
+    [SerializeField] private float maxVerticalRotation = 30f;
 
     private Vector3 currentVelocity;
 
@@ -43,7 +43,10 @@ public class CameraTracking : MonoBehaviour
     {
         if (target == null) return;
 
-        Quaternion targetRotation = Quaternion.Euler(target.eulerAngles.x, target.eulerAngles.y, 0f);
+        float rotationX = target.eulerAngles.x;
+        rotationX = (rotationX > 180f) ? rotationX - 360f : rotationX;
+        rotationX = Mathf.Clamp(rotationX, -maxVerticalRotation, maxVerticalRotation);
+        Quaternion targetRotation = Quaternion.Euler(rotationX, target.eulerAngles.y, 0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 }
