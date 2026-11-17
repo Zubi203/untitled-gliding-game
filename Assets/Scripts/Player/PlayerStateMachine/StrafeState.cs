@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class StrafeState : FlightState
 {
+    private float wingSpreadWeight = 1f;
     private float duration = 0.5f;
     private float maxStrafeVelocity = 10f;
     private float minStrafeVelocity = 0f;
@@ -28,6 +29,7 @@ public class StrafeState : FlightState
     public override void UpdateState()
     {
         base.UpdateState();
+        SpreadWings();
     }
     public override void FixedUpdateState()
     {
@@ -54,4 +56,11 @@ public class StrafeState : FlightState
     public override void OnTriggerEnter(Collider other){}
     public override void OnTriggerStay(Collider other){}
     public override void OnTriggerExit(Collider other){}
+
+    private void SpreadWings()
+    {
+        float lerpPercent = localTime / duration;
+        Context.PlayerAnimation.WingsToIdle();
+        Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingSpreadWeight, lerpPercent);
+    }
 }

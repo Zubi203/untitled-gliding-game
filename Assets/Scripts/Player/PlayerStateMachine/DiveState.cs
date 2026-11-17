@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class DiveState : FlightState
 {
+    private float wingsCloseWeight = 0f;
     private float duration = 0.3f;
     private float diveForce = 10f;
-    private float rotateSpeed = 5f;
+    private float rotateSpeed = 1f;
     private Quaternion startRotation;
     private Quaternion targetRotation;
     public DiveState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
@@ -22,6 +23,7 @@ public class DiveState : FlightState
     public override void UpdateState()
     {
         base.UpdateState();
+        CloseWings();
     }
     public override void FixedUpdateState()
     {
@@ -32,7 +34,7 @@ public class DiveState : FlightState
         Vector3 targetVelocity = -Vector3.up * currentDiveVelocity;
         Context.PlayerRigidbody.linearVelocity += targetVelocity;
 
-        Quaternion currentRotation = Quaternion.Lerp(startRotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
+        Quaternion currentRotation = Quaternion.RotateTowards(startRotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
         Context.PlayerTransform.rotation = currentRotation;
     }
     public override FlightStateMachine.EFlightState GetNextState()
@@ -46,4 +48,11 @@ public class DiveState : FlightState
     public override void OnTriggerEnter(Collider other){}
     public override void OnTriggerStay(Collider other){}
     public override void OnTriggerExit(Collider other){}
+
+    private void CloseWings()
+    {
+        float lerpPercent = localTime / duration;
+        Context.PlayerAnimation.WingsToIdle();
+        Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingsCloseWeight, lerpPercent);
+    }
 }

@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class FlapStartState : FlightState
 {
-    private float duration = 0.1f;
-    private float dipVelocity = 4f;
+    private float wingRaiseWeight = 1f;
+    private float duration = 0.15f;
+    private float dipVelocity = 10f;
     private float forwardVelocityReductionPercent = 0.7f;
     private Vector3 startingVelocity;
     private Vector3 targetVelocity;
@@ -23,6 +24,7 @@ public class FlapStartState : FlightState
     public override void UpdateState()
     {
         base.UpdateState();
+        RaiseWings();
     }
     public override void FixedUpdateState()
     {
@@ -45,4 +47,11 @@ public class FlapStartState : FlightState
     public override void OnTriggerEnter(Collider other){}
     public override void OnTriggerStay(Collider other){}
     public override void OnTriggerExit(Collider other){}
+
+    private void RaiseWings()
+    {
+        float lerpPercent = localTime / duration;
+        Context.PlayerAnimation.WingsToFlapStart(lerpPercent);
+        Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingRaiseWeight, lerpPercent);
+    }
 }

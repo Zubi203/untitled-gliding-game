@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class GlideState : FlightState
 {
+    private float maxWingSpreadWeight = 1f;
+    private float minWingSpreadWeight = 0.2f;
+    private float wingSpreadSpeed = 5f;
     private float currentSpeed, currentTilt, tiltLerpValue;
 
     public GlideState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
@@ -12,12 +15,15 @@ public class GlideState : FlightState
     public override void EnterState()
     {
         base.EnterState();
+        
     }
     public override void ExitState(){}
     public override void UpdateState()
     {
         base.UpdateState();
         GlideRotation();
+        Context.PlayerAnimation.LookAtRotationDirection();
+        SpreadWings();
     }
     public override void FixedUpdateState()
     {
@@ -88,5 +94,16 @@ public class GlideState : FlightState
 
         Quaternion targetRotation = Quaternion.Euler(Context.InputHandler.rotationInput.x, Context.InputHandler.rotationInput.y, -currentTilt);
         Context.PlayerTransform.rotation = Quaternion.Lerp(Context.PlayerTransform.rotation, targetRotation, Context.RotationChangeRate * Time.deltaTime);
+    }
+
+    private void SpreadWings()
+    {
+        Context.PlayerAnimation.WingsToIdle();
+
+        float weightRange = maxWingSpreadWeight - minWingSpreadWeight;
+        float pitchFactor = Vector3.Dot(Context.PlayerTransform.forward, Vector3.down);
+        pitchFactor = 1f - pitchFactor;
+        float targetWeight = (weightRange * pitchFactor) + minWingSpreadWeight;
+        Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, targetWeight, wingSpreadSpeed * Time.deltaTime);
     }
 }

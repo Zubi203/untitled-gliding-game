@@ -21,6 +21,7 @@ public class FlightStateMachineContext: MonoBehaviour
     [SerializeField] private PlayerInput inputHandler;
     [SerializeField] private FlightJuice flightJuice;
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private PlayerProceduralAnimation playerAnimation;
 
     void Awake()
     {
@@ -37,12 +38,14 @@ public class FlightStateMachineContext: MonoBehaviour
         Assert.IsNotNull(inputHandler, "Player Input has not been assigned");
         Assert.IsNotNull(flightJuice, "Flight Juice has not been assigned");
         Assert.IsNotNull(playerTransform, "Player Transform has not been assigned");
+        Assert.IsNotNull(playerAnimation, "Player Animation has not been assigned");
     }
 
     // Read-only fields
     public Rigidbody PlayerRigidbody => playerRigidbody;
     public PlayerInput InputHandler => inputHandler;
     public FlightJuice FlightJuiceComponent => flightJuice;
+    public PlayerProceduralAnimation PlayerAnimation => playerAnimation;
     public Transform PlayerTransform => playerTransform;
     public float TiltStrength => tiltStrength;
     public float MaxTilt => maxTilt;
