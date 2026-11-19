@@ -56,16 +56,15 @@ public class GlideState : FlightState
     private void GlideMovement()
     {
         float pitchInRadians = Context.InputHandler.rotationInput.x * Mathf.Deg2Rad;
-        float diveFactor = Vector3.Dot(Context.PlayerTransform.forward, Vector3.down);
+        float accelerationVectorMultiplier = Vector3.Dot(Context.PlayerTransform.forward, Vector3.down);
+        float horizontalForceMultiplier = 1f - Mathf.Abs(accelerationVectorMultiplier);
 
-        float horizontalForceComponentMultiplier = 0.5f * Mathf.Cos(pitchInRadians) + 1f;
-        float airResistanceMultiplier = 0.5f * Mathf.Sin(pitchInRadians) + 1f;
+        Vector3 baseForwardForce = Context.MinSpeed * Context.PlayerTransform.forward;
 
-
-        currentSpeed += diveFactor * Context.BaseSpeed * Time.fixedDeltaTime;
-        currentSpeed = Mathf.Clamp(currentSpeed, Context.MinSpeed, Context.MaxSpeed);
-
-        Vector3 forwardVelocity = Context.PlayerTransform.forward * currentSpeed;
+        currentSpeed += accelerationVectorMultiplier * Context.GlideMaxAcceleration * Time.fixedDeltaTime;
+        currentSpeed = Mathf.Clamp(currentSpeed, -Context.MaxSpeed, Context.MaxSpeed);
+        Vector3 accelerationVector = Context.PlayerTransform.forward * currentSpeed;
+        Vector3 forwardVelocity = baseForwardForce + accelerationVector;
         
         Vector3 netVelocity = Vector3.Lerp(Context.PlayerRigidbody.linearVelocity, forwardVelocity, Context.VelocityChangeRate * Time.fixedDeltaTime);
 

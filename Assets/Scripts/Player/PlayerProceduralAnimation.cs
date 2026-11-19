@@ -111,9 +111,10 @@ public class PlayerProceduralAnimation : MonoBehaviour
 
     public void WingsToFlapEnd(float lerpPercent)
     {
-        if (lerpPercent < 0.5f)
+        float idleLerpThreshold = 0.3f;
+        if (lerpPercent < idleLerpThreshold)
         {
-            float newLerpPercent = lerpPercent / 0.5f;
+            float newLerpPercent = lerpPercent / idleLerpThreshold;
             currentLeftWingTarget.position = Vector3.Lerp(leftWingFlapStartTarget.position, leftWingIdleTarget.position, newLerpPercent);
             currentRightWingTarget.position = Vector3.Lerp(rightWingFlapStartTarget.position, rightWingIdleTarget.position, newLerpPercent);
 
@@ -122,7 +123,7 @@ public class PlayerProceduralAnimation : MonoBehaviour
         }
         else
         {
-            float newLerpPercent = (lerpPercent - 0.5f) / 0.5f;
+            float newLerpPercent = (lerpPercent - idleLerpThreshold) / (1f - idleLerpThreshold);
             currentLeftWingTarget.position = Vector3.Lerp(leftWingIdleTarget.position, leftWingFlapEndTarget.position, newLerpPercent);
             currentRightWingTarget.position = Vector3.Lerp(rightWingIdleTarget.position, rightWingFlapEndTarget.position, newLerpPercent);
 
@@ -160,6 +161,7 @@ public class PlayerProceduralAnimation : MonoBehaviour
 
     private void Update()
     {
+        
         EvaluateTailConstraints();
         EvaluateTailRotation();
     }

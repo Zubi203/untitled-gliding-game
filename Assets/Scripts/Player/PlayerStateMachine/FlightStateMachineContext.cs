@@ -11,8 +11,8 @@ public class FlightStateMachineContext: MonoBehaviour
     [SerializeField] private float gravityForce = 8f;
 
     [Header("Velocities")]
-    [SerializeField] private float baseSpeed = 30f;
-    [SerializeField] private float minSpeed = 5f;
+    [SerializeField] private float glideMaxAcceleration = 30f;
+    [SerializeField] private float minSpeed = 30f;
     [SerializeField] private float maxSpeed = 400f;
     [SerializeField] private float velocityChangeRate = 4f;
 
@@ -51,9 +51,9 @@ public class FlightStateMachineContext: MonoBehaviour
     public float MaxTilt => maxTilt;
     public float RotationChangeRate => rotationChangeRate;
     public float GravityForce => gravityForce;
-    public float BaseSpeed => baseSpeed;
     public float MinSpeed => minSpeed;
     public float MaxSpeed => maxSpeed;
+    public float GlideMaxAcceleration => glideMaxAcceleration;
     public float VelocityChangeRate => velocityChangeRate;
     
 }

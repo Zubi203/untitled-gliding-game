@@ -4018,7 +4018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8e9bba7d1aa6841a71c25da42c82bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  sensitivity: 0.7
+  sensitivity: 1
   maxPitchRange: 90
   rotationSpeed: 600
 --- !u!1 &2262006819885184945
@@ -7302,6 +7302,7 @@ Transform:
   - {fileID: 5159939276143943911}
   - {fileID: 2229713125018047543}
   - {fileID: 4138428006342381836}
+  - {fileID: 1765705213011900477}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6825778393188526007
@@ -7361,6 +7362,55 @@ MonoBehaviour:
     m_HintWeight: 0.5
     m_MaintainTargetPositionOffset: 0
     m_MaintainTargetRotationOffset: 0
+--- !u!1 &7096441076471234211
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1765705213011900477}
+  - component: {fileID: 290068808040212560}
+  m_Layer: 0
+  m_Name: PostProcessing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1765705213011900477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7096441076471234211}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -445.60214, y: 0, z: 67.37793}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 346869865981123788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &290068808040212560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7096441076471234211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
 --- !u!1 &7199706607973544169
 GameObject:
   m_ObjectHideFlags: 0
@@ -7723,7 +7773,7 @@ Transform:
   m_GameObject: {fileID: 7990073568318525627}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5, y: 0.4, z: 0.6}
+  m_LocalPosition: {x: 5, y: 0.5, z: 0.6}
   m_LocalScale: {x: 0.10000001, y: 0.10000001, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7872,7 +7922,7 @@ MonoBehaviour:
   tailParent: {fileID: 4138428006342381836}
   distanceBetweenTailSegments: 0.6
   tailAttachPoint: {fileID: 2901178121105477658}
-  tailAngleThreshold: 15
+  tailAngleThreshold: 10
 --- !u!1 &8461273404848189469
 GameObject:
   m_ObjectHideFlags: 0
@@ -8007,7 +8057,7 @@ Transform:
   m_GameObject: {fileID: 8488023567131993193}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5, y: 0.4, z: 0.6}
+  m_LocalPosition: {x: -5, y: 0.5, z: 0.6}
   m_LocalScale: {x: 0.10000001, y: 0.10000001, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8060,10 +8110,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraTracking
   target: {fileID: 2229713125018047543}
   smoothing: 0.05
-  rotationSpeed: 1
+  rotationSpeed: 3
   maxCameraSmoothingRange: 30
   offset: {x: 0, y: 0, z: 0}
-  maxVerticalRotation: 30
+  maxVerticalRotation: 50
 --- !u!1 &8573574102036904437
 GameObject:
   m_ObjectHideFlags: 0
@@ -8466,9 +8516,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   maxPlayerSpeed: 200
+  postProcessing: {fileID: 290068808040212560}
   minCameraFOV: 50
-  maxCameraFOV: 80
+  maxCameraFOV: 100
+  minCameraZOffset: -15
+  maxCameraZOffset: -3
   FOVLerpSpeed: 2
+  minChromaticAbberationIntensity: 0
+  maxChromaticAbberationIntensity: 0.5
+  minDepthOfFieldAperture: 8
+  maxDepthOfFieldAperture: 32
 --- !u!114 &5177438427304244949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8485,8 +8542,8 @@ MonoBehaviour:
   tiltStrength: 2
   rotationChangeRate: 8
   gravityForce: 80
-  baseSpeed: 40
-  minSpeed: 5
+  glideMaxAcceleration: 60
+  minSpeed: 20
   maxSpeed: 200
   velocityChangeRate: 8
   playerRigidbody: {fileID: 4990389074266035065}
@@ -8699,7 +8756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b37cffab30b939469bac076fdd82c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.DampedTransform
-  m_Weight: 1
+  m_Weight: 0.36
   m_Data:
     m_ConstrainedObject: {fileID: 5337594588238637555}
     m_Source: {fileID: 596069336804299490}
@@ -9020,7 +9077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b37cffab30b939469bac076fdd82c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.DampedTransform
-  m_Weight: 1
+  m_Weight: 0.36
   m_Data:
     m_ConstrainedObject: {fileID: 3010012634073524668}
     m_Source: {fileID: 1990599864756939890}
