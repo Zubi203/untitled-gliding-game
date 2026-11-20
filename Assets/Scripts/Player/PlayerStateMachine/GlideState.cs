@@ -65,14 +65,18 @@ public class GlideState : FlightState
         currentSpeed = Mathf.Clamp(currentSpeed, -Context.MaxSpeed, Context.MaxSpeed);
         Vector3 accelerationVector = Context.PlayerTransform.forward * currentSpeed;
         Vector3 forwardVelocity = baseForwardForce + accelerationVector;
+
+        Vector3 horizontalComponent = new Vector3(forwardVelocity.x, 0f, forwardVelocity.z);
+        Vector3 absoluteHorizontalVelocity = new Vector3(Context.PlayerTransform.forward.x, 0f, Context.PlayerTransform.forward.z) * Mathf.Abs(horizontalComponent.magnitude);
+        forwardVelocity = new Vector3(absoluteHorizontalVelocity.x, forwardVelocity.y, absoluteHorizontalVelocity.z);
         
         Vector3 netVelocity = Vector3.Lerp(Context.PlayerRigidbody.linearVelocity, forwardVelocity, Context.VelocityChangeRate * Time.fixedDeltaTime);
 
         netVelocity += Vector3.down * Context.GravityForce * Time.fixedDeltaTime;
 
-        Context.PlayerRigidbody.linearVelocity = netVelocity;
+        netVelocity = Vector3.ClampMagnitude(netVelocity, Context.MaxSpeed);
 
-        
+        Context.PlayerRigidbody.linearVelocity = netVelocity;
     }
 
     private void GlideRotation()
@@ -105,4 +109,5 @@ public class GlideState : FlightState
         float targetWeight = (weightRange * pitchFactor) + minWingSpreadWeight;
         Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, targetWeight, wingSpreadSpeed * Time.deltaTime);
     }
+
 }

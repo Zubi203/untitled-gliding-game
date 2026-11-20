@@ -48,10 +48,21 @@ public class FlightJuice : MonoBehaviour
 
     void Update()
     {
-        AdjustCameraFOV();
-        AdjustCameraPosition();
+        ApplyCameraEffects();
         AdjustChromaticAberration();
         AdjustDepthOfField();
+
+        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentCameraFOV, Time.deltaTime * FOVLerpSpeed);
+
+        Vector3 targetCameraOffset = new Vector3(camera.transform.localPosition.x, camera.transform.localPosition.y, currentCameraOffset);
+        camera.transform.localPosition = Vector3.Lerp(camera.transform.localPosition, targetCameraOffset, Time.deltaTime * FOVLerpSpeed);
+    }
+
+    public void ApplyCameraEffects()
+    {
+        AdjustCameraFOV();
+        AdjustCameraPosition();
+        
     }
 
     void AdjustCameraFOV()
@@ -62,7 +73,7 @@ public class FlightJuice : MonoBehaviour
         float currentSpeedPercent = currentSpeed / maxPlayerSpeed;
         float cameraFOVRange = maxCameraFOV - minCameraFOV;
         currentCameraFOV = minCameraFOV + (cameraFOVRange * currentSpeedPercent);
-        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentCameraFOV, Time.deltaTime * FOVLerpSpeed);
+        
 
     }
 
@@ -72,7 +83,7 @@ public class FlightJuice : MonoBehaviour
         float currentSpeedPercent = 1f - (currentSpeed / maxPlayerSpeed);
         float cameraOffsetRange = maxCameraZOffset - minCameraZOffset;
         currentCameraOffset = maxCameraZOffset - (cameraOffsetRange * currentSpeedPercent);
-        camera.transform.localPosition = new Vector3(camera.transform.localPosition.x, camera.transform.localPosition.y, currentCameraOffset);
+        
     }
 
     void AdjustChromaticAberration()

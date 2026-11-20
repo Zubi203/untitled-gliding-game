@@ -4,10 +4,9 @@ public class FlapState : FlightState
 {
     private float wingFlapWeight = 1f;
     private float flapDuration = 0.3f;
-    private float liftForce = 10f;
-    private float rotateSpeed = 10f;
-    private Quaternion startRotation;
+    private float liftMaxAcceleration = 10f;
     private Quaternion targetRotation;
+    private Quaternion currentRotation;
     public FlapState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
     {
         Context = context;
@@ -16,9 +15,15 @@ public class FlapState : FlightState
     public override void EnterState()
     {
         base.EnterState();
-        targetRotation = Context.PlayerTransform.rotation;
+
+        Vector3 referenceDir = -Context.PlayerTransform.forward;
+        Vector3 lookDir = Context.PlayerTransform.forward + Context.PlayerTransform.up;
+        targetRotation = Quaternion.LookRotation(lookDir, referenceDir);
     }
-    public override void ExitState(){}
+    public override void ExitState()
+    {
+        Context.InputHandler.rotationInput = currentRotation.eulerAngles;
+    }
     public override void UpdateState()
     {
         base.UpdateState();
@@ -28,12 +33,12 @@ public class FlapState : FlightState
     {
         base.FixedUpdateState();
         float lerpPercent = localTime / flapDuration;
-        float currentFlapVelocity = Mathf.Lerp(liftForce, 0f, lerpPercent);
+        float currentFlapVelocity = Context.FlapSpeedCurve.Evaluate(lerpPercent) * liftMaxAcceleration;
 
         Vector3 targetVelocity = Vector3.up * currentFlapVelocity;
         Context.PlayerRigidbody.linearVelocity += targetVelocity;
 
-        Quaternion currentRotation = Quaternion.RotateTowards(startRotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
+        currentRotation = Quaternion.Slerp(Context.PlayerTransform.rotation, targetRotation, lerpPercent);
         Context.PlayerTransform.rotation = currentRotation;
     }
     public override FlightStateMachine.EFlightState GetNextState()

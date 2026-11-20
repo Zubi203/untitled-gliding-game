@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class StrafeState : FlightState
 {
-    private float wingSpreadWeight = 1f;
-    private float duration = 0.5f;
-    private float maxStrafeVelocity = 10f;
+    private float wingFlapWeight = 1f;
+    private float duration = 0.4f;
+    private float maxStrafeVelocity = 7f;
     private float minStrafeVelocity = 0f;
     private float currentStrafeVelocity = 0f;
-    private float startingRotation = 0f;
-    private float targetRotation = 0f;
     private Vector3 strafeDir;
+    private Quaternion targetRotation;
+    private Quaternion currentRotation;
 
     public StrafeState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
     {
@@ -19,29 +19,30 @@ public class StrafeState : FlightState
     public override void EnterState()
     {
         base.EnterState();
-        startingRotation = Context.PlayerTransform.rotation.eulerAngles.z;
-        targetRotation = startingRotation + 360f * -Context.InputHandler.inputX;
-
         strafeDir = Context.PlayerTransform.right * Context.InputHandler.inputX;
         strafeDir = new Vector3(strafeDir.x, 0f, strafeDir.z);
+        targetRotation = Quaternion.LookRotation(strafeDir, -Context.PlayerTransform.forward);
+        
     }
-    public override void ExitState(){}
+    public override void ExitState()
+    {
+        Context.InputHandler.rotationInput = targetRotation.eulerAngles;
+    }
     public override void UpdateState()
     {
         base.UpdateState();
-        SpreadWings();
+        FlapWings();
     }
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
         float lerpPercent = localTime / duration;
-        currentStrafeVelocity = Mathf.Lerp(maxStrafeVelocity, minStrafeVelocity, lerpPercent);
+        currentStrafeVelocity = (Context.StrafeSpeedCurve.Evaluate(lerpPercent) * maxStrafeVelocity) + minStrafeVelocity;
 
         Vector3 targetVelocity = strafeDir.normalized * currentStrafeVelocity;
         Context.PlayerRigidbody.linearVelocity += targetVelocity;
 
-        float currentRotationZ = Mathf.Lerp(startingRotation, targetRotation, lerpPercent);
-        Quaternion currentRotation = Quaternion.Euler(Context.PlayerTransform.eulerAngles.x, Context.PlayerTransform.eulerAngles.y, currentRotationZ);
+        currentRotation = Quaternion.Slerp(Context.PlayerTransform.rotation, targetRotation, lerpPercent);
         Context.PlayerTransform.rotation = currentRotation;
 
     }
@@ -57,10 +58,20 @@ public class StrafeState : FlightState
     public override void OnTriggerStay(Collider other){}
     public override void OnTriggerExit(Collider other){}
 
-    private void SpreadWings()
+    private void FlapWings()
     {
-        float lerpPercent = localTime / duration;
-        Context.PlayerAnimation.WingsToIdle();
-        Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingSpreadWeight, lerpPercent);
+        if (localTime < 0.25f * duration)
+        {
+            float lerpPercent = localTime / (0.25f * duration);
+            Context.PlayerAnimation.WingsToFlapStart(lerpPercent);
+            Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingFlapWeight, lerpPercent);
+        }
+        else
+        {
+            float lerpPercent = (localTime - (0.25f * duration)) / (0.75f * duration);
+            Context.PlayerAnimation.WingsToFlapEnd(lerpPercent);
+            Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingFlapWeight, lerpPercent);
+        }
+        
     }
 }

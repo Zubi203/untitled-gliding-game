@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Assertions;
 
+[RequireComponent(typeof(FlightStateMachineContext))]
 public class FlightStateMachine : StateMachine<FlightStateMachine.EFlightState>
 {
     public enum EFlightState
@@ -17,13 +17,7 @@ public class FlightStateMachine : StateMachine<FlightStateMachine.EFlightState>
 
     void Awake()
     {
-        AssertReferences();
         InitializeStates();
-    }
-
-    void AssertReferences()
-    {
-        Assert.IsNotNull(context, "State machine context has not been assigned");
     }
 
     void InitializeStates()

@@ -5,9 +5,8 @@ public class DiveState : FlightState
     private float wingsCloseWeight = 0f;
     private float duration = 0.3f;
     private float diveForce = 10f;
-    private float rotateSpeed = 1f;
-    private Quaternion startRotation;
     private Quaternion targetRotation;
+    private Quaternion currentRotation;
     public DiveState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
     {
         Context = context;
@@ -16,10 +15,12 @@ public class DiveState : FlightState
     public override void EnterState()
     {
         base.EnterState();
-        startRotation = Quaternion.LookRotation(-Vector3.up, Context.PlayerTransform.forward);
-        targetRotation = Context.PlayerTransform.rotation;
+        targetRotation = Quaternion.LookRotation(-Vector3.up, Context.PlayerTransform.forward);
     }
-    public override void ExitState(){}
+    public override void ExitState()
+    {
+        Context.InputHandler.rotationInput = targetRotation.eulerAngles;
+    }
     public override void UpdateState()
     {
         base.UpdateState();
@@ -29,12 +30,12 @@ public class DiveState : FlightState
     {
         base.FixedUpdateState();
         float lerpPercent = localTime / duration;
-        float currentDiveVelocity = Mathf.Lerp(diveForce, 0f, lerpPercent);
+        float currentDiveVelocity = Context.DiveSpeedCurve.Evaluate(lerpPercent) * diveForce;
 
         Vector3 targetVelocity = -Vector3.up * currentDiveVelocity;
         Context.PlayerRigidbody.linearVelocity += targetVelocity;
 
-        Quaternion currentRotation = Quaternion.RotateTowards(startRotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
+        currentRotation = Quaternion.Slerp(Context.PlayerTransform.rotation, targetRotation, lerpPercent);
         Context.PlayerTransform.rotation = currentRotation;
     }
     public override FlightStateMachine.EFlightState GetNextState()

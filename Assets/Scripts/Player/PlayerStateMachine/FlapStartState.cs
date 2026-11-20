@@ -8,6 +8,7 @@ public class FlapStartState : FlightState
     private float forwardVelocityReductionPercent = 0.7f;
     private Vector3 startingVelocity;
     private Vector3 targetVelocity;
+    private Quaternion targetRotation;
     public FlapStartState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)
     {
         Context = context;
@@ -16,9 +17,12 @@ public class FlapStartState : FlightState
     public override void EnterState()
     {
         base.EnterState();
-        Context.PlayerRigidbody.linearVelocity *= forwardVelocityReductionPercent;
         startingVelocity = Context.PlayerRigidbody.linearVelocity;
         targetVelocity = startingVelocity * forwardVelocityReductionPercent;
+        
+        Vector3 referenceDir = (Context.PlayerTransform.forward.y > 0f) ? Context.PlayerTransform.forward : -Context.PlayerTransform.forward;
+        Vector3 lookDir = new Vector3(Context.PlayerTransform.forward.x, 0f, Context.PlayerTransform.forward.z);
+        targetRotation = Quaternion.LookRotation(lookDir, referenceDir);
     }
     public override void ExitState(){}
     public override void UpdateState()
@@ -35,6 +39,9 @@ public class FlapStartState : FlightState
         Vector3 currentVelocity = Vector3.Lerp(startingVelocity, targetVelocity, lerpPercent);
         currentVelocity += -Vector3.up * currentDipVelocity;
         Context.PlayerRigidbody.linearVelocity = currentVelocity;
+
+        Quaternion currentRotation = Quaternion.Slerp(Context.PlayerTransform.rotation, targetRotation, lerpPercent);
+        Context.PlayerTransform.rotation = currentRotation;
     }
     public override FlightStateMachine.EFlightState GetNextState()
     {

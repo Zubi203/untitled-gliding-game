@@ -7,7 +7,7 @@ public class DestroyOnCrash : MonoBehaviour
 {
     [SerializeField] private string wallTag = "Wall";
     [SerializeField] private float sceneReloadDelay = 2f;
-    [SerializeField] private GameObject playerVisual;
+    [SerializeField] private GameObject[] playerVisuals;
     [SerializeField] private ParticleSystem deathParticles;
     private bool isReloadingScene;
 
@@ -37,9 +37,9 @@ public class DestroyOnCrash : MonoBehaviour
             collider.enabled = false;
         }
 
-        if (playerVisual != null)
+        foreach (GameObject visual in playerVisuals)
         {
-            playerVisual.SetActive(false);
+            visual.SetActive(false);
         }
         
         if(TryGetComponent<Rigidbody>(out Rigidbody rb))

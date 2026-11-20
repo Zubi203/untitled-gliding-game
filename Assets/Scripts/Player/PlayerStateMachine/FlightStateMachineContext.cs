@@ -4,6 +4,11 @@ using UnityEngine.Assertions;
 public class FlightStateMachineContext: MonoBehaviour
 {
 
+    [Header("Speed Curves")]
+    [SerializeField] private AnimationCurve flapSpeedCurve;
+    [SerializeField] private AnimationCurve strafeSpeedCurve;
+    [SerializeField] private AnimationCurve diveSpeedCurve;
+
     [Header("Forces")]
     [SerializeField] private float maxTilt = 50f;
     [SerializeField] private float tiltStrength = 500f;
@@ -42,6 +47,9 @@ public class FlightStateMachineContext: MonoBehaviour
     }
 
     // Read-only fields
+    public AnimationCurve FlapSpeedCurve => flapSpeedCurve;
+    public AnimationCurve DiveSpeedCurve => diveSpeedCurve;
+    public AnimationCurve StrafeSpeedCurve => strafeSpeedCurve;
     public Rigidbody PlayerRigidbody => playerRigidbody;
     public PlayerInput InputHandler => inputHandler;
     public FlightJuice FlightJuiceComponent => flightJuice;

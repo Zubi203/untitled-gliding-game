@@ -40,7 +40,7 @@ public class PlayerProceduralAnimation : MonoBehaviour
     [SerializeField] private Transform tailAttachPoint;
     [SerializeField] private float tailAngleThreshold = 30f;
     private List<Transform> tailSegments = new List<Transform>();
-    private Vector3 leftLegOriginPos, rightLegOriginPos;
+    private Vector3 leftLegOriginPos, rightLegOriginPos, headTargetPos;
     private Quaternion leftWingRotation, rightWingRotation;
     
 
@@ -75,19 +75,11 @@ public class PlayerProceduralAnimation : MonoBehaviour
         if (headTarget == null || neckBase == null || inputHandler == null) return;
 
         Vector3 neckDir = Quaternion.Euler(inputHandler.rotationInput) * Vector3.forward;
-        headTarget.position = neckBase.position + (neckDir * maxHeadTargetExtendDistance);
+        headTargetPos = neckBase.position + (neckDir * maxHeadTargetExtendDistance);
+        headTarget.position = Vector3.Lerp(headTarget.position, headTargetPos, Time.deltaTime * 4f);
 
         // constrain head position if its too close to neck
-        Vector3 neckPos = neckBase.position;
-        Vector3 headPos = headTarget.position;
-
-        float distance = Vector3.Distance(neckPos, headPos);
-        if (distance < minHeadTargetExtendDistance)
-        {
-            Vector3 extendDir = headPos - neckPos;
-            Vector3 newPosition = (extendDir.normalized * minHeadTargetExtendDistance) + neckPos;
-            headTarget.position = newPosition;
-        }
+        headTarget.position = VectorSolver.ConstrainPosition(headTarget.position, neckBase.position, minHeadTargetExtendDistance);
     }
 
     public void WingsToIdle(float lerpSpeed = 10f)
@@ -184,15 +176,9 @@ public class PlayerProceduralAnimation : MonoBehaviour
 
         for (int i = 0; i < tailSegments.Count; i++)
         {
-            Transform currentSegment = tailSegments[i];
-            Transform prevSegment = (i == 0) ? tailAttachPoint : tailSegments[i - 1];
-
-            float distance = Vector3.Distance(currentSegment.position, prevSegment.position);
-            if (distance > distanceBetweenTailSegments || distance < distanceBetweenTailSegments)
-            {
-                Vector3 dirFromPrevious = currentSegment.position - prevSegment.position;
-                currentSegment.position = prevSegment.position + (dirFromPrevious.normalized * distanceBetweenTailSegments);
-            }
+            Vector3 currentSegment = tailSegments[i].position;
+            Vector3 prevSegment = (i == 0) ? tailAttachPoint.position : tailSegments[i - 1].position;
+            tailSegments[i].position = VectorSolver.ConstrainPosition(currentSegment, prevSegment, distanceBetweenTailSegments);
         }
     }
 
@@ -209,25 +195,12 @@ public class PlayerProceduralAnimation : MonoBehaviour
             
             Vector3 referenceDirection = (i <= 1) ? tailAttachPoint.forward : (tailSegments[i-2].position - tailSegments[i-1].position).normalized;
 
-            Vector3 constrainedDirection = ClampAngleBetweenVectors(referenceDirection, rawDirection, tailAngleThreshold);
+            Vector3 constrainedDirection = VectorSolver.ClampAngleBetweenVectors(referenceDirection, rawDirection, tailAngleThreshold);
 
             tailSegments[i].position = prevSegment - (constrainedDirection * distanceBetweenTailSegments);
             
             tailSegments[i].rotation = Quaternion.LookRotation(constrainedDirection);
         }
-    }
-
-    Vector3 ClampAngleBetweenVectors(Vector3 fromDir, Vector3 toDir, float maxAngle)
-    {
-        Quaternion rotationDiff = Quaternion.FromToRotation(fromDir, toDir);
-        rotationDiff.ToAngleAxis(out float angle, out Vector3 axis);
-
-        if (angle > maxAngle)
-        {
-            return Quaternion.AngleAxis(maxAngle, axis) * fromDir;
-        }
-
-        return toDir;
     }
 
     private void ConstrainLeg(DampedTransform legToConstrain)
