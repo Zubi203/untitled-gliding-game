@@ -12,12 +12,12 @@ public class PlayerProceduralAnimation : MonoBehaviour
     [SerializeField] private float maxHeadTargetExtendDistance = 4f;
     [SerializeField] private float minHeadTargetExtendDistance = 2.5f;
     [SerializeField] private float wingRotateSpeed = 50f;
+    [SerializeField] private float wingLerpSpeed = 10f;
 
     [Header("Constraints")]
     [SerializeField] private TwoBoneIKConstraint leftWingIKConstraint;
     [SerializeField] private TwoBoneIKConstraint rightWingIKConstraint;
     [SerializeField] private TwoBoneIKConstraint headIKConstraint;
-    [SerializeField] private ChainIKConstraint tailIKConstraint;
     [SerializeField] private Rig wingSpreadRig;
     [SerializeField] private DampedTransform leftLegDampConstraint;
     [SerializeField] private DampedTransform rightLegDampConstraint;
@@ -34,12 +34,6 @@ public class PlayerProceduralAnimation : MonoBehaviour
     [SerializeField] private Transform headTarget;
     [SerializeField] private Transform neckBase;
 
-    [Header("Tail")]
-    [SerializeField] private Transform tailParent;
-    [SerializeField] private float distanceBetweenTailSegments = 1f;
-    [SerializeField] private Transform tailAttachPoint;
-    [SerializeField] private float tailAngleThreshold = 30f;
-    private List<Transform> tailSegments = new List<Transform>();
     private Vector3 leftLegOriginPos, rightLegOriginPos, headTargetPos;
     private Quaternion leftWingRotation, rightWingRotation;
     
@@ -50,7 +44,6 @@ public class PlayerProceduralAnimation : MonoBehaviour
     void Awake()
     {
         AssertReferences();
-        GetTailSegments();
 
         if (leftLegDampConstraint == null || rightLegDampConstraint == null) return;
 
@@ -58,17 +51,7 @@ public class PlayerProceduralAnimation : MonoBehaviour
         rightLegOriginPos = rightLegDampConstraint.data.sourceObject.localPosition;
     }
 
-    private void GetTailSegments()
-    {
-        if (tailParent == null) return;
-        tailSegments.Clear();
-        Transform[] tailChildren = tailParent.GetComponentsInChildren<Transform>().Where(t => t != tailParent).ToArray();
-
-        foreach (Transform child in tailChildren)
-        {
-            tailSegments.Add(child);
-        }
-    }
+    
 
     public void LookAtRotationDirection()
     {
@@ -129,7 +112,6 @@ public class PlayerProceduralAnimation : MonoBehaviour
     {
         Assert.IsNotNull(leftWingIKConstraint, "The left wing IK constraint has not been assigned");
         Assert.IsNotNull(rightWingIKConstraint, "The right wing IK constraint has not been assigned");
-        Assert.IsNotNull(tailIKConstraint, "The tail IK constraint has not been assigned");
 
         Assert.IsNotNull(leftWingIdleTarget, "The left wing idle target has not been assigned");
         Assert.IsNotNull(rightWingIdleTarget, "The right wing idle target has not been assigned");
@@ -151,56 +133,16 @@ public class PlayerProceduralAnimation : MonoBehaviour
         headIKConstraint.data.target.rotation = headTarget.rotation;
     }
 
-    private void Update()
-    {
-        
-        EvaluateTailConstraints();
-        EvaluateTailRotation();
-    }
-
     private void MoveWingsToTarget()
     {
-        leftWingIKConstraint.data.target.position = currentLeftWingTarget.position;
-        rightWingIKConstraint.data.target.position = currentRightWingTarget.position;
+        leftWingIKConstraint.data.target.position = Vector3.Lerp(leftWingIKConstraint.data.target.position, currentLeftWingTarget.position, Time.deltaTime * wingLerpSpeed);
+        rightWingIKConstraint.data.target.position = Vector3.Lerp(rightWingIKConstraint.data.target.position, currentRightWingTarget.position, Time.deltaTime * wingLerpSpeed);
 
 
         currentLeftWingTarget.rotation = Quaternion.RotateTowards(currentLeftWingTarget.rotation, leftWingRotation, wingRotateSpeed * Time.deltaTime);
         currentRightWingTarget.rotation = Quaternion.RotateTowards(currentRightWingTarget.rotation, rightWingRotation, wingRotateSpeed * Time.deltaTime);
         leftWingIKConstraint.data.target.rotation = currentLeftWingTarget.rotation;
         rightWingIKConstraint.data.target.rotation = currentRightWingTarget.rotation;
-    }
-
-    private void EvaluateTailConstraints()
-    {
-        if (tailAttachPoint == null) return;
-
-        for (int i = 0; i < tailSegments.Count; i++)
-        {
-            Vector3 currentSegment = tailSegments[i].position;
-            Vector3 prevSegment = (i == 0) ? tailAttachPoint.position : tailSegments[i - 1].position;
-            tailSegments[i].position = VectorSolver.ConstrainPosition(currentSegment, prevSegment, distanceBetweenTailSegments);
-        }
-    }
-
-    
-
-    private void EvaluateTailRotation()
-    {
-        for (int i = 0; i < tailSegments.Count; i++)
-        {
-            Vector3 currentSegment = tailSegments[i].position;
-            Vector3 prevSegment = (i == 0) ? tailAttachPoint.position : tailSegments[i-1].position;
-            
-            Vector3 rawDirection = (prevSegment - currentSegment).normalized;
-            
-            Vector3 referenceDirection = (i <= 1) ? tailAttachPoint.forward : (tailSegments[i-2].position - tailSegments[i-1].position).normalized;
-
-            Vector3 constrainedDirection = VectorSolver.ClampAngleBetweenVectors(referenceDirection, rawDirection, tailAngleThreshold);
-
-            tailSegments[i].position = prevSegment - (constrainedDirection * distanceBetweenTailSegments);
-            
-            tailSegments[i].rotation = Quaternion.LookRotation(constrainedDirection);
-        }
     }
 
     private void ConstrainLeg(DampedTransform legToConstrain)

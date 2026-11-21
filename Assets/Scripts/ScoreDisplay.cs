@@ -4,35 +4,42 @@ using TMPro;
 
 public class ScoreDisplay : MonoBehaviour
 {
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text totalScoreText;
+    [SerializeField] private TMP_Text scorePoolText;
 
     private ScoreData scoreData;
 
     void Awake()
     {
         scoreData = Resources.Load<ScoreData>(nameof(ScoreData));
-        GetTextMeshProComponent();
 
-        if (text == null) return;
+        scoreData.TotalScoreChanged.AddListener(UpdateTotalScoreText);
+        UpdateTotalScoreText(scoreData.CurrentScore);
 
-        scoreData.ScoreChanged.AddListener(UpdateScoreText);
-        UpdateScoreText(scoreData.CurrentScore);
+        scoreData.ScorePoolChanged.AddListener(UpdateScorePoolText);
+        UpdateScorePoolText(scoreData.ScorePool);
     }
 
-    void GetTextMeshProComponent()
+    void UpdateTotalScoreText(int score)
     {
-        if (text != null) return;
-        
-        if (TryGetComponent<TMP_Text>(out TMP_Text txt))
+        if (totalScoreText == null) return;
+
+        totalScoreText.text = "Score: " + score.ToString();
+    }
+
+    void UpdateScorePoolText(int score)
+    {
+        if (scorePoolText == null) return;
+
+        if (score <= 0)
         {
-            text = txt;
+            scorePoolText.gameObject.SetActive(false);
         }
-    }
-
-    void UpdateScoreText(int score)
-    {
-        if (text == null) return;
-
-        text.text = "Score: " + score.ToString();
+        else
+        {
+            scorePoolText.gameObject.SetActive(true);
+            scorePoolText.text = score.ToString();
+        }
+        
     }
 }

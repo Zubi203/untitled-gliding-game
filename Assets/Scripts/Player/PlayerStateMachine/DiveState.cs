@@ -3,7 +3,7 @@ using UnityEngine;
 public class DiveState : FlightState
 {
     private float wingsCloseWeight = 0f;
-    private float duration = 0.3f;
+    private float duration = 0.4f;
     private float diveForce = 10f;
     private Quaternion targetRotation;
     private Quaternion currentRotation;

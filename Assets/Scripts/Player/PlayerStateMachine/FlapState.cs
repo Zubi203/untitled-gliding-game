@@ -3,8 +3,8 @@ using UnityEngine;
 public class FlapState : FlightState
 {
     private float wingFlapWeight = 1f;
-    private float flapDuration = 0.3f;
-    private float liftMaxAcceleration = 10f;
+    private float flapDuration = 0.35f;
+    private float liftMaxAcceleration = 6f;
     private Quaternion targetRotation;
     private Quaternion currentRotation;
     public FlapState(FlightStateMachineContext context, FlightStateMachine.EFlightState stateKey) : base(context , stateKey)

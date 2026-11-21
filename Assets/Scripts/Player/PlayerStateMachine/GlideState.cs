@@ -3,7 +3,7 @@ using UnityEngine;
 public class GlideState : FlightState
 {
     private float maxWingSpreadWeight = 1f;
-    private float minWingSpreadWeight = 0.2f;
+    private float minWingSpreadWeight = 0f;
     private float wingSpreadSpeed = 5f;
     private float currentSpeed, currentTilt, tiltLerpValue;
 

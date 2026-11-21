@@ -5,7 +5,7 @@ public class FlapStartState : FlightState
     private float wingRaiseWeight = 1f;
     private float duration = 0.15f;
     private float dipVelocity = 10f;
-    private float forwardVelocityReductionPercent = 0.7f;
+    private float forwardVelocityReductionPercent = 1f;
     private Vector3 startingVelocity;
     private Vector3 targetVelocity;
     private Quaternion targetRotation;

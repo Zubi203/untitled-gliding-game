@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542abb8e0ff1ab44396703aa37cd9580, type: 3}
   m_Name: ScoreData
   m_EditorClassIdentifier: Assembly-CSharp::ScoreData
-  baseScoreGain: 10
+  TotalScoreChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  ScorePoolChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  BaseScoreGain: 3

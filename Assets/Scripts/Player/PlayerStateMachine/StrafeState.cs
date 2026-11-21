@@ -60,15 +60,15 @@ public class StrafeState : FlightState
 
     private void FlapWings()
     {
-        if (localTime < 0.25f * duration)
+        if (localTime < 0.35f * duration)
         {
-            float lerpPercent = localTime / (0.25f * duration);
+            float lerpPercent = localTime / (0.35f * duration);
             Context.PlayerAnimation.WingsToFlapStart(lerpPercent);
             Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingFlapWeight, lerpPercent);
         }
         else
         {
-            float lerpPercent = (localTime - (0.25f * duration)) / (0.75f * duration);
+            float lerpPercent = (localTime - (0.35f * duration)) / (0.65f * duration);
             Context.PlayerAnimation.WingsToFlapEnd(lerpPercent);
             Context.PlayerAnimation.WingSpreadRig.weight = Mathf.Lerp(Context.PlayerAnimation.WingSpreadRig.weight, wingFlapWeight, lerpPercent);
         }

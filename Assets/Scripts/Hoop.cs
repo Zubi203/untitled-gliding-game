@@ -38,8 +38,8 @@ public class Hoop : MonoBehaviour
             collectParticles.Play();
         }
 
-        float scoreToGain = scoreData.baseScoreGain * scoreGainMultiplier;
-        scoreData.ChangeScore((int)scoreToGain);
+        float scoreToGain = scoreData.BaseScoreGain * scoreGainMultiplier;
+        scoreData.ChangeScorePool((int)scoreToGain);
         
         if (TryGetComponent<MeshRenderer>(out MeshRenderer mesh))
         {
