@@ -34,7 +34,7 @@ public class GlideState : FlightState
     {
         if (Context.InputHandler.specialActionInput)
         {
-            if (Context.InputHandler.inputX != 0f)
+            if (Mathf.Abs(Context.InputHandler.inputX) > Mathf.Abs(Context.InputHandler.inputY) && Context.InputHandler.inputX != 0f)
             {
                 return FlightStateMachine.EFlightState.Strafe;
             }

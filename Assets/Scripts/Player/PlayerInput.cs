@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Assertions;
 
 public class PlayerInput : MonoBehaviour
 {
+    [SerializeField] private InputActionAsset inputActions;
     [SerializeField] private float sensitivity = 1f;
     [SerializeField] private float maxPitchRange = 90f;
     [SerializeField] private float rotationSpeed = 500f;
@@ -10,13 +13,32 @@ public class PlayerInput : MonoBehaviour
     [System.NonSerialized] public Vector3 rotationInput;
     [System.NonSerialized] public float inputX, inputY;
     [System.NonSerialized] public bool specialActionInput;
-
+    private InputAction moveAction, specialAction;
     private float rotationInputX, rotationInputY;
 
     void Awake()
     {
+        Assert.IsNotNull(inputActions, "Input Actions Asset has not been assigned");
+
         rotationInput = transform.rotation.eulerAngles;
     }
+
+    void OnEnable()
+    {
+        inputActions.FindActionMap("Player").Enable();
+    }
+
+    void OnDisable()
+    {
+        inputActions.FindActionMap("Player").Disable();
+    }
+
+    void Start()
+    {
+        moveAction = InputSystem.actions.FindAction("Move");
+        specialAction = InputSystem.actions.FindAction("Special");
+    }
+
     void FixedUpdate()
     {
         GetRotationInput();
@@ -25,13 +47,14 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
-        specialActionInput = Input.GetKeyDown(KeyCode.Space);
+        specialActionInput = specialAction.WasPressedThisFrame();
     }
 
     void GetRotationInput()
     {
-        inputX = Input.GetAxis("Horizontal");
-        inputY = Input.GetAxis("Vertical");
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        inputX = input.x;
+        inputY = input.y;
 
         rotationInputX += inputY * sensitivity;
         rotationInputY += inputX * sensitivity;

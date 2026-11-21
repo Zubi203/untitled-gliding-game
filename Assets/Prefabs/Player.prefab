@@ -4215,6 +4215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8e9bba7d1aa6841a71c25da42c82bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   sensitivity: 3
   maxPitchRange: 90
   rotationSpeed: 600

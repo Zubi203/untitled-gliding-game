@@ -38,7 +38,7 @@ public class ScoreDisplay : MonoBehaviour
         else
         {
             scorePoolText.gameObject.SetActive(true);
-            scorePoolText.text = score.ToString();
+            scorePoolText.text = " + " + score.ToString();
         }
         
     }
