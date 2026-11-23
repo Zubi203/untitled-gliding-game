@@ -2,13 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.Assertions;
 
 public class SceneLoader : Service
 {
-    #region Service
+    #region Initialize
     void Awake()
     {
         RegisterToServiceLocator(this);
+        Assert.IsNotNull(loadingScreen, "Loading Screen has not been assigned");
     }
 
     void OnDestroy()

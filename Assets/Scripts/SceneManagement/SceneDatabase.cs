@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 
-public class SceneDatabase: ScriptableObject
+public class SceneDatabase
 {
     public enum Scenes
     {
@@ -11,18 +11,18 @@ public class SceneDatabase: ScriptableObject
         TestLevel
     }
 
-    [SerializeField] private Dictionary<Scenes, string> scenePaths = new Dictionary<Scenes, string>
+    static Dictionary<Scenes, string> scenePaths = new Dictionary<Scenes, string>
     {
-        {Scenes.TitleScreen , ""},
-        {Scenes.TestLevel , ""}
+        {Scenes.TitleScreen , "TitleScreen"},
+        {Scenes.TestLevel , "TestScene"}
     };
 
-    public string GetSceneName(Scenes targetScene)
+    public static string GetSceneName(Scenes targetScene)
     {
         return scenePaths[targetScene];
     }
 
-    public int GetSceneBuildIndex(Scenes targetScene)
+    public static int GetSceneBuildIndex(Scenes targetScene)
     {
         return SceneUtility.GetBuildIndexByScenePath(scenePaths[targetScene]);
     }

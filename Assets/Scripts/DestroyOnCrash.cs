@@ -56,7 +56,13 @@ public class DestroyOnCrash : MonoBehaviour
 
         isReloadingScene = true;
         yield return new WaitForSeconds(sceneReloadDelay);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneLoader sceneLoader = ServiceLocator.Instance.GetService<SceneLoader>();
+        sceneLoader
+            .NewTransition()
+            .Load(SceneDatabase.Scenes.TestLevel, SceneDatabase.GetSceneName(SceneDatabase.Scenes.TestLevel), true)
+            .UseLoadingOverlay()
+            .Unload(SceneDatabase.Scenes.TestLevel)
+            .Perform();
         isReloadingScene = false;
     }
 }
