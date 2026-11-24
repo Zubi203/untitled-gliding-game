@@ -9009,8 +9009,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   inputHandler: {fileID: 5960091817370624451}
   legMaxDampDistance: 5
-  maxHeadTargetExtendDistance: 5
-  minHeadTargetExtendDistance: 4
+  maxHeadTargetExtendDistance: 4
+  minHeadTargetExtendDistance: 3
   wingRotateSpeed: 700
   wingLerpSpeed: 1000
   leftWingIKConstraint: {fileID: 8152268736621255017}
@@ -9709,7 +9709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e72155b3c1ad9147933bc2c77b27869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreGainSystem
-  scorePoolWaitTime: 1
+  scorePoolWaitTime: 0.3
   maxSurroundingWallMultiplier: 10
   scoreGainBySurroundingWalls:
     serializedVersion: 2
@@ -9813,7 +9813,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  playerMaxSpeed: 200
+  playerMaxSpeed: 250
 --- !u!114 &8680621266058039951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9826,13 +9826,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6c5b8fe27ef1c429ecb6d98bf2215b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxPlayerSpeed: 200
+  maxPlayerSpeed: 250
   postProcessing: {fileID: 290068808040212560}
   minCameraFOV: 50
   maxCameraFOV: 100
   minCameraZOffset: -15
-  maxCameraZOffset: -3
-  FOVLerpSpeed: 2
+  maxCameraZOffset: -2
+  FOVLerpSpeed: 4
   minChromaticAbberationIntensity: 0
   maxChromaticAbberationIntensity: 0.5
   minDepthOfFieldAperture: 8
@@ -9877,8 +9877,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0033340454
-      value: 0.20742798
+      time: 0.0033454895
+      value: 0.39035034
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -9886,8 +9886,50 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 1
-      value: 1
+      time: 0.6588089
+      value: 0.995514
+      inSlope: 0.11737543
+      outSlope: 0.11737543
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.00334
+      value: -0.0047572777
+      inSlope: -5.41811
+      outSlope: -5.41811
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.06795111
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  strafeRotationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.784626
+      value: 0.9890375
+      inSlope: 0.55306625
+      outSlope: 0.55306625
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0031433
+      value: 0.90263367
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -9923,11 +9965,12 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxTilt: 50
   tiltStrength: 2
-  rotationChangeRate: 8
+  maxRotationChangeRate: 10
+  minRotationChangeRate: 4
   gravityForce: 100
-  glideMaxAcceleration: 75
+  glideMaxAcceleration: 130
   minSpeed: 20
-  maxSpeed: 200
+  maxSpeed: 250
   velocityChangeRate: 8
   playerRigidbody: {fileID: 4990389074266035065}
   inputHandler: {fileID: 5960091817370624451}

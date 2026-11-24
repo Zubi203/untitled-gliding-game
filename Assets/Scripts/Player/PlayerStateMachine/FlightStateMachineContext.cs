@@ -7,12 +7,14 @@ public class FlightStateMachineContext: MonoBehaviour
     [Header("Speed Curves")]
     [SerializeField] private AnimationCurve flapSpeedCurve;
     [SerializeField] private AnimationCurve strafeSpeedCurve;
+    [SerializeField] private AnimationCurve strafeRotationCurve;
     [SerializeField] private AnimationCurve diveSpeedCurve;
 
     [Header("Forces")]
     [SerializeField] private float maxTilt = 50f;
     [SerializeField] private float tiltStrength = 500f;
-    [SerializeField] private float rotationChangeRate = 5f;
+    [SerializeField] private float maxRotationChangeRate = 8f;
+    [SerializeField] private float minRotationChangeRate = 2f;
     [SerializeField] private float gravityForce = 8f;
 
     [Header("Velocities")]
@@ -50,6 +52,7 @@ public class FlightStateMachineContext: MonoBehaviour
     public AnimationCurve FlapSpeedCurve => flapSpeedCurve;
     public AnimationCurve DiveSpeedCurve => diveSpeedCurve;
     public AnimationCurve StrafeSpeedCurve => strafeSpeedCurve;
+    public AnimationCurve StrafeRotationCurve => strafeRotationCurve;
     public Rigidbody PlayerRigidbody => playerRigidbody;
     public PlayerInput InputHandler => inputHandler;
     public FlightJuice FlightJuiceComponent => flightJuice;
@@ -57,7 +60,8 @@ public class FlightStateMachineContext: MonoBehaviour
     public Transform PlayerTransform => playerTransform;
     public float TiltStrength => tiltStrength;
     public float MaxTilt => maxTilt;
-    public float RotationChangeRate => rotationChangeRate;
+    public float MaxRotationChangeRate => maxRotationChangeRate;
+    public float MinRotationChangeRate => minRotationChangeRate;
     public float GravityForce => gravityForce;
     public float MinSpeed => minSpeed;
     public float MaxSpeed => maxSpeed;

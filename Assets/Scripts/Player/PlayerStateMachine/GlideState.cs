@@ -96,7 +96,11 @@ public class GlideState : FlightState
         }
 
         Quaternion targetRotation = Quaternion.Euler(Context.InputHandler.rotationInput.x, Context.InputHandler.rotationInput.y, -currentTilt);
-        Context.PlayerTransform.rotation = Quaternion.Lerp(Context.PlayerTransform.rotation, targetRotation, Context.RotationChangeRate * Time.deltaTime);
+
+        float speedPercent = 1f - (Context.PlayerRigidbody.linearVelocity.magnitude / Context.MaxSpeed);
+        float rotateSpeed = Context.MaxRotationChangeRate * speedPercent;
+        rotateSpeed = Mathf.Clamp(rotateSpeed, Context.MinRotationChangeRate, Context.MaxRotationChangeRate);
+        Context.PlayerTransform.rotation = Quaternion.Slerp(Context.PlayerTransform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
     }
 
     private void SpreadWings()
