@@ -9813,7 +9813,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  playerMaxSpeed: 250
+  playerMaxSpeed: 300
 --- !u!114 &8680621266058039951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9826,7 +9826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6c5b8fe27ef1c429ecb6d98bf2215b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxPlayerSpeed: 250
+  maxPlayerSpeed: 300
   postProcessing: {fileID: 290068808040212560}
   minCameraFOV: 50
   maxCameraFOV: 100
@@ -9970,7 +9970,7 @@ MonoBehaviour:
   gravityForce: 100
   glideMaxAcceleration: 130
   minSpeed: 20
-  maxSpeed: 250
+  maxSpeed: 300
   velocityChangeRate: 8
   playerRigidbody: {fileID: 4990389074266035065}
   inputHandler: {fileID: 5960091817370624451}
