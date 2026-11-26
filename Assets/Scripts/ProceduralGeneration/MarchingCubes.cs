@@ -1,45 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Unity.Mathematics;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MarchingCubes : MonoBehaviour
 {
-    [SerializeField] private int width = 100;
-    [SerializeField] private int height = 100;
-    [SerializeField] private float noiseResolution = 0.05f;
     [SerializeField] private float heightThreshold = 0.5f;
-    [SerializeField] private bool visualizeNoise;
-    private float[,,] heights;
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private MeshFilter meshFilter;
 
-    private void Start()
+    private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
-        StartCoroutine(NewMesh());
     }
 
-    private IEnumerator NewMesh()
-    {
-        while (true)
-        {
-            GenerateMesh();
-            yield return new WaitForSeconds(1f);
-        }
-    }
 
-    private void GenerateMesh()
+    public void GenerateMesh(float[,,] heightMap, int noiseScale = 10)
     {
-        SetHeights();
-        MarchCubes();
+        MarchCubes(heightMap, noiseScale);
         SetMesh();
     }
 
     private void SetMesh()
     {
         Mesh mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
@@ -49,35 +36,38 @@ public class MarchingCubes : MonoBehaviour
 
         meshFilter.mesh = mesh;
 
+        MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
+
     }
 
-    private void MarchCubes()
+    private void MarchCubes(float[,,] heightMap, int noiseScale = 10)
     {
         vertices.Clear();
         triangles.Clear();
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < heightMap.GetLength(0) - 1; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < heightMap.GetLength(1) - 1; y++)
             {
-                for (int z = 0; z < width; z++)
+                for (int z = 0; z < heightMap.GetLength(2) - 1; z++)
                 {
                     float[] cubeCorners = new float[8];
 
                     for (int i = 0; i < 8; i++)
                     {
                         Vector3Int corner = new Vector3Int(x, y, z) + MarchingTable.Corners[i];
-                        cubeCorners[i] = heights[corner.x, corner.y, corner.z];
+                        cubeCorners[i] = heightMap[corner.x, corner.y, corner.z];
                     }
 
-                    MarchCube(new Vector3(x, y, z), GetConfigurationIndex(cubeCorners));
+                    MarchCube(new Vector3(x, y, z) * noiseScale, GetConfigurationIndex(cubeCorners), noiseScale);
                 }
             }
         }
 
     }
 
-    private void MarchCube(Vector3 position, int configIndex)
+    private void MarchCube(Vector3 position, int configIndex, int noiseScale = 10)
     {
         if (configIndex == 0 || configIndex == 255) return;
 
@@ -91,8 +81,8 @@ public class MarchingCubes : MonoBehaviour
 
                 if (triTableValue == -1) return;
 
-                Vector3 edgeStart = position + MarchingTable.Edges[triTableValue, 0];
-                Vector3 edgeEnd = position + MarchingTable.Edges[triTableValue, 1];
+                Vector3 edgeStart = position + (MarchingTable.Edges[triTableValue, 0] * noiseScale);
+                Vector3 edgeEnd = position + (MarchingTable.Edges[triTableValue, 1] * noiseScale);
 
                 Vector3 vertex = (edgeStart + edgeEnd) / 2;
 
@@ -120,48 +110,5 @@ public class MarchingCubes : MonoBehaviour
         return configIndex;
     }
 
-    private void SetHeights()
-    {
-        heights = new float[width + 1, height + 1, width + 1];
-
-        for (int x = 0; x < width + 1; x++)
-        {
-            for (int y = 0; y < height + 1; y++)
-            {
-                for (int z = 0; z < width + 1; z++)
-                {
-                    float currentHeight = height * Mathf.PerlinNoise(x * noiseResolution, z * noiseResolution);
-                    float newHeight;
-
-                    if(y > currentHeight)
-                    {
-                        newHeight = y - currentHeight;
-                    }
-                    else
-                    {
-                        newHeight = currentHeight - y;
-                    }
-
-                    heights[x, y, z] = newHeight;
-                }
-            }
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (!visualizeNoise || !Application.isPlaying) return;
-
-        for (int x = 0; x < width + 1; x++)
-        {
-            for (int y = 0; y < height + 1; y++)
-            {
-                for (int z = 0; z < width + 1; z++)
-                {
-                    Gizmos.color = new Color(heights[x, y, z], heights[x, y, z], heights[x, y, z], 1f);
-                    Gizmos.DrawCube(new Vector3(x, y, z), new Vector3(0.2f, 0.2f, 0.2f));
-                }
-            }
-        }
-    }
+    
 }
